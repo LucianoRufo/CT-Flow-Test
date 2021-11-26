@@ -1,6 +1,6 @@
 {
   "name": "ct-flow",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "bin/index.js",
   "bin": {
@@ -12,6 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "boxen": "^6.2.1",
+    "chalk": "^5.0.0",
     "yargs": "^17.2.1"
   }
 }
