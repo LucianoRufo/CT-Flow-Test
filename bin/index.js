@@ -67,5 +67,5 @@ const options = yargs
     command: "hotfix",
     describe: "Manage your hotfix branches. #TODO",
   })
-  .epilogue("Try 'git ctflow <subcommand> help' for details.")
+  .epilogue("Try 'ctflow <subcommand> --help' for details.")
   .help(true).argv;
