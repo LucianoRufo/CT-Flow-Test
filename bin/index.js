@@ -35,8 +35,6 @@ const options = yargs
           command: "start <epicName>",
           describe: "Starts an epic branch based on develop.",
           handler: async (argv) => {
-            console.log(argv.epicName);
-
             if (argv.epicName) {
               console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
               //console.log(`git checkout -b epic/${argv.epicName} develop`);
