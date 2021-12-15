@@ -28,7 +28,7 @@ const options = yargs
   })
   .command({
     command: "epic",
-    describe: "Manage your epic branches #WIP",
+    describe: "Manage your epic branches",
     builder: (yargs) => {
       yargs
         .command({
@@ -37,7 +37,6 @@ const options = yargs
           handler: async (argv) => {
             if (argv.epicName) {
               console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
-              //console.log(`git checkout -b epic/${argv.epicName} develop`);
               shell.exec(`git checkout -b epic/${argv.epicName} develop`);
               console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
               console.log(
@@ -48,23 +47,41 @@ const options = yargs
           },
         })
         .command({
-          command: "publish",
+          command: "publish <epicName>",
           describe: "Pushes the epic branch to origin.",
-          builder: function () {
-            console.log("builder publish!");
+          handler: async (argv) => {
+            if (argv.epicName) {
+              console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
+              shell.exec(`git checkout epic/${argv.epicName}`);
+              shell.exec(`git push origin epic/${argv.epicName}`);
+              console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
+              console.log("\x1b[33m", `\ngit checkout epic/${argv.epicName}`);
+              console.log("\x1b[33m", `git push origin epic/${argv.epicName}`);
+            }
           },
         })
         .command({
-          command: "finish",
+          command: "finish <epicName>",
           describe:
             "Merges the indicated epic branch to develop and deletes it.",
-          builder: function () {
-            console.log("builder finish!");
+          handler: async (argv) => {
+            if (argv.epicName) {
+              console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
+              shell.exec(`git checkout develop`);
+              shell.exec(`git merge --no-ff epic/${argv.epicName}`);
+              shell.exec(`git branch -d epic/${argv.epicName}`);
+              console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
+              console.log("\x1b[33m", `\ngit checkout develop`);
+              console.log(
+                "\x1b[33m",
+                `git merge --no-ff epic/${argv.epicName}`
+              );
+              console.log("\x1b[33m", `git branch -d epic/${argv.epicName}`);
+            }
           },
         });
     },
     handler: async (argv) => {
-      console.log(argv);
       console.log("\x1b[31m", "\nERROR: NO SUBCOMMAND SPECIFIED");
       console.log("\x1b[37m", "\nusage: ctflow epic start");
       console.log("or: ctflow epic finish");
