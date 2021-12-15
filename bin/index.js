@@ -11,11 +11,19 @@ const options = yargs
     command: "init",
     describe: "Initialize a new git repo with CT-FLOW support.",
     handler: ({ flag }) => {
+      console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
       shell.exec("git init");
       shell.exec(
         `git commit --allow-empty -m "Initializing ctflow enabled repo...."`
       );
       shell.exec("git checkout -b develop main");
+      console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
+      console.log("\x1b[33m", "git init");
+      console.log(
+        "\x1b[33m",
+        "git commit --allow-empty -m Initializing ct-flow...."
+      );
+      console.log("\x1b[33m", "git checkout -b develop master");
     },
   })
   .command({
@@ -24,33 +32,47 @@ const options = yargs
     builder: (yargs) => {
       yargs
         .command({
-          command: "start",
-          describe: "Subcommand for starting an epic",
-          handler: console.log("start"),
+          command: "start <epicName>",
+          describe: "Starts an epic branch based on develop.",
+          handler: async (argv) => {
+            console.log(argv.epicName);
+
+            if (argv.epicName) {
+              console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
+              //console.log(`git checkout -b epic/${argv.epicName} develop`);
+              shell.exec(`git checkout -b epic/${argv.epicName} develop`);
+              console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
+              console.log(
+                "\x1b[33m",
+                `\ngit checkout -b epic/${argv.epicName} develop`
+              );
+            }
+          },
         })
         .command({
           command: "publish",
-          handler: console.log("publish"),
-          describe: "Subcommand for publishing epic",
+          describe: "Pushes the epic branch to origin.",
+          builder: function () {
+            console.log("builder publish!");
+          },
         })
         .command({
           command: "finish",
-          handler: console.log("finish"),
-          describe: "Subcommand for finishing an epic",
+          describe:
+            "Merges the indicated epic branch to develop and deletes it.",
+          builder: function () {
+            console.log("builder finish!");
+          },
         });
     },
     handler: async (argv) => {
       console.log(argv);
-
-      if (argv.start) {
-        console.log("start");
-      }
-      if (argv.publish) {
-        console.log("publish");
-      }
-      if (argv.finish) {
-        console.log("finish");
-      }
+      console.log("\x1b[31m", "\nERROR: NO SUBCOMMAND SPECIFIED");
+      console.log("\x1b[37m", "\nusage: ctflow epic start");
+      console.log("or: ctflow epic finish");
+      console.log("or: ctflow epic publish");
+      console.log("\nManage your epic branches.");
+      console.log("For more specific help type the command followed by --help");
     },
   })
   .command({ command: "story", describe: "Manage your story branches. #TODO" })
