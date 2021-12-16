@@ -7,6 +7,7 @@ var shell = require("shelljs");
 
 const options = yargs
   .usage(usage)
+  .scriptName("ctflow")
   .command({
     command: "init",
     describe: "Initialize a new git repo with CT-FLOW support.",
