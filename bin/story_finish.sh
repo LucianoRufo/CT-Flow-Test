@@ -22,12 +22,7 @@ printf ${YELLOW}
 echo
 git checkout develop
 echo 
-echo 
 git merge --no-ff $story
-echo 
-echo 
-git branch -d $story
-echo 
 echo 
 git branch -d $story
 echo 
