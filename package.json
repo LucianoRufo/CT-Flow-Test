@@ -1,5 +1,5 @@
 {
-  "name": "ct-flow",
+  "name": "ctflow",
   "version": "0.6.9",
   "description": "",
   "main": "bin/index.js",
