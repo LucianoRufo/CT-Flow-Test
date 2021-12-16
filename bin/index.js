@@ -118,7 +118,7 @@ const options = yargs
       yargs
         .command({
           command: "start <jiraId> <name>",
-          describe: "Starts an story branch based on develop.",
+          describe: "Starts a story branch based on an indicated epic.",
           handler: async (argv) => {
             if (argv.name && argv.jiraId) {
               console.log("\x1b[36m%s\x1b[0m", "ALL EPIC BRANCHES:\n");
@@ -126,8 +126,12 @@ const options = yargs
               var list = await shell
                 .exec(`git branch -a | grep epic/`)
                 .split("\n")
-                .filter((branch) => branch.includes("epic/CTDEV-"))
-                .map((branch) => branch.trim());
+                .map((branch) => branch.trim())
+                .filter(
+                  (branch) =>
+                    branch.includes("epic/CTDEV-") &&
+                    branch.lastIndexOf("epic/CTDEV-") === 0
+                );
 
               console.log(
                 "\x1b[36m%s\x1b[0m",

@@ -3,6 +3,7 @@
 LIGHTCYAN='\033[1;36m'
 LIGHTGREEN='\033[1;32m'
 WHITE='\033[1;37m'
+YELLOW='\033[1;33m'
 
 printf ${LIGHTGREEN}
 echo "Please select an epic:"
@@ -19,6 +20,9 @@ epicId=${epicFromId%%_*}   # get substring before the first _
 echo 
 printf ${LIGHTCYAN}
 printf "GIT OUTPUT:"
+echo
+printf ${YELLOW}
+echo
 git checkout -b story/$epic/CTDEV-$2_$3 $epic
 echo 
 echo 
@@ -28,6 +32,6 @@ printf "COMMANDS RUN:"
 echo 
 echo 
 
-printf ${LIGHTGREEN}
+printf ${YELLOW}
 echo "git branch -a | grep epic/"
 echo "git checkout -b story/$epicId/CTDEV-$2_$3 $epic"
