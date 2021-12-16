@@ -160,55 +160,40 @@ const options = yargs
           },
         })
         .command({
-          command: "publish <jiraId> <name>",
-          describe: "Pushes the story branch to origin.",
-          handler: async (argv) => {
-            if (argv.name && argv.jiraId) {
-              console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
-              shell.exec(
-                `git checkout story/CTDEV-${argv.jiraId}_${argv.name}`
-              );
-              shell.exec(
-                `git push origin story/CTDEV-${argv.jiraId}_${argv.name}`
-              );
-
-              console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-              console.log(
-                "\x1b[33m",
-                `\ngit checkout story/CTDEV-${argv.jiraId}_${argv.name}`
-              );
-              console.log(
-                "\x1b[33m",
-                `git push origin story/CTDEV-${argv.jiraId}_${argv.name}`
-              );
-            }
-          },
-        })
-        .command({
-          command: "finish <jiraId> <name>",
+          command: "finish",
           describe:
             "Merges the indicated story branch to develop and deletes it.",
           handler: async (argv) => {
-            if (argv.name && argv.jiraId) {
-              console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
-              shell.exec(`git checkout develop`);
-              shell.exec(
-                `git merge --no-ff story/CTDEV-${argv.jiraId}_${argv.name}`
-              );
-              shell.exec(
-                `git branch -d story/CTDEV-${argv.jiraId}_${argv.name}`
+            console.log("\x1b[36m%s\x1b[0m", "ALL STORY BRANCHES:\n");
+
+            var list = await shell
+              .exec(`git branch -a | grep story/`)
+              .split("\n")
+              .map((branch) => branch.trim())
+              .filter(
+                (branch) =>
+                  branch.includes("story/CTDEV-") &&
+                  branch.lastIndexOf("story/CTDEV-") === 0
               );
 
-              console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-              console.log("\x1b[33m", `\ngit checkout develop`);
-              console.log(
-                "\x1b[33m",
-                `git merge --no-ff story/CTDEV-${argv.jiraId}_${argv.name}`
+            console.log(
+              "\x1b[36m%s\x1b[0m",
+              "\nLocal stories available: ",
+              list,
+              "\n"
+            );
+
+            if (list.length !== 0) {
+              var spawn = require("child_process").spawn;
+              var output = await spawn(
+                "sh",
+                [`./bin/story_finish.sh`, list.toString().replace(",", " ")],
+                {
+                  stdio: "inherit",
+                }
               );
-              console.log(
-                "\x1b[33m",
-                `git branch -d story/CTDEV-${argv.jiraId}_${argv.name}`
-              );
+            } else {
+              console.log("\x1b[31m", "ERROR: There are no story branches");
             }
           },
         });
