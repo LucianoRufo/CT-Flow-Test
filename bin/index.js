@@ -113,7 +113,7 @@ const options = yargs
   })
   .command({
     command: "story",
-    describe: "Manage your story branches. #WIP",
+    describe: "Manage your story branches.",
     builder: (yargs) => {
       yargs
         .command({
