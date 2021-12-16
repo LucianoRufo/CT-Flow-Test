@@ -121,22 +121,37 @@ const options = yargs
           describe: "Starts an story branch based on develop.",
           handler: async (argv) => {
             if (argv.name && argv.jiraId) {
-              console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
+              console.log("\x1b[36m%s\x1b[0m", "ALL EPIC BRANCHES:\n");
 
               var list = await shell
-                .exec(`git branch --list`)
+                .exec(`git branch -a | grep epic/`)
                 .split("\n")
                 .filter((branch) => branch.includes("epic/CTDEV-"))
                 .map((branch) => branch.trim());
 
-              var spawn = require("child_process").spawn;
-              var output = await spawn(
-                "sh",
-                [`./bin/test.sh`, list, argv.jiraId, argv.name],
-                {
-                  stdio: "inherit",
-                }
+              console.log(
+                "\x1b[36m%s\x1b[0m",
+                "\nLocal epics available: ",
+                list,
+                "\n"
               );
+              if (list.length !== 0) {
+                var spawn = require("child_process").spawn;
+                var output = await spawn(
+                  "sh",
+                  [
+                    `./bin/story_start.sh`,
+                    list.toString().replace(",", " "),
+                    argv.jiraId,
+                    argv.name,
+                  ],
+                  {
+                    stdio: "inherit",
+                  }
+                );
+              } else {
+                console.log("\x1b[31m", "ERROR: There are no epics");
+              }
             }
           },
         })
