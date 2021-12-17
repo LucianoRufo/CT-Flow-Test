@@ -1,8 +1,10 @@
 #! /usr/bin/env node
 const yargs = require("yargs");
+const init = require("./init");
 
-const usage = "\nUsage: ctflow <subcommand>";
 var shell = require("shelljs");
+const { start } = require("./epic");
+const usage = "\nUsage: ctflow <subcommand>";
 
 const options = yargs
   .usage(usage)
@@ -10,22 +12,7 @@ const options = yargs
   .command({
     command: "init",
     describe: "Initialize a new git repo with CT-FLOW support.",
-    handler: ({ flag }) => {
-      console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
-      shell.exec("git init");
-      shell.exec(
-        `git commit --allow-empty -m "Initializing ctflow enabled repo...."`
-      );
-      shell.exec("git checkout -b develop main");
-
-      console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-      console.log("\x1b[33m", "git init");
-      console.log(
-        "\x1b[33m",
-        "git commit --allow-empty -m Initializing ct-flow...."
-      );
-      console.log("\x1b[33m", "git checkout -b develop master");
-    },
+    handler: init,
   })
   .command({
     command: "epic",
@@ -35,20 +22,7 @@ const options = yargs
         .command({
           command: "start <jiraId> <name>",
           describe: "Starts an epic branch based on develop.",
-          handler: async (argv) => {
-            if (argv.name && argv.jiraId) {
-              console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
-              shell.exec(
-                `git checkout -b epic/CTDEV-${argv.jiraId}_${argv.name} develop`
-              );
-
-              console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-              console.log(
-                "\x1b[33m",
-                `\ngit checkout -b epic/CTDEV-${argv.jiraId}_${argv.name} develop`
-              );
-            }
-          },
+          handler: start,
         })
         .command({
           command: "publish <jiraId> <name>",
