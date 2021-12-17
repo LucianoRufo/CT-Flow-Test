@@ -88,8 +88,8 @@ const options = yargs
                 `git branch -d epic/CTDEV-${argv.jiraId}_${argv.name}`
               );
 
-              console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-              console.log("\x1b[33m", `\ngit checkout develop`);
+              console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:\n");
+              console.log("\x1b[33m", `git checkout develop`);
               console.log(
                 "\x1b[33m",
                 `git merge --no-ff epic/CTDEV-${argv.jiraId}_${argv.name}`
@@ -183,36 +183,51 @@ const options = yargs
           describe:
             "Merges the indicated story branch to develop and deletes it.",
           handler: async (argv) => {
-            console.log("\x1b[36m%s\x1b[0m", "ALL STORY BRANCHES:\n");
+            console.log("\x1b[36m%s\x1b[0m", "CURRENT BRANCH:\n");
+            var output = shell.exec(`git branch --show-current`);
 
-            var list = await shell
-              .exec(`git branch -a | grep story/`)
-              .split("\n")
-              .map((branch) => branch.trim())
-              .filter(
-                (branch) =>
-                  branch.includes("story/CTDEV-") &&
-                  branch.lastIndexOf("story/CTDEV-") === 0
-              );
-
-            console.log(
-              "\x1b[36m%s\x1b[0m",
-              "\nLocal stories available: ",
-              list,
-              "\n"
-            );
-
-            if (list.length !== 0) {
-              var spawn = require("child_process").spawn;
-              var output = await spawn(
-                "sh",
-                [`./bin/story_finish.sh`, list.toString().replace(",", " ")],
-                {
-                  stdio: "inherit",
-                }
-              );
+            if (output.toString().startsWith("story/CTDEV-", 0)) {
+              shell.exec(`git checkout develop`);
+              shell.exec(`git merge --no-ff ${output}`);
+              shell.exec(`git branch -d ${output}`);
+              console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:\n");
+              console.log("\x1b[33m", `git branch --show-current`);
+              console.log("\x1b[33m", `git checkout develop`);
+              console.log("\x1b[33m", `git merge --no-ff ${output}`);
+              console.log("\x1b[33m", `git branch -d ${output}`);
             } else {
-              console.log("\x1b[31m", "ERROR: There are no story branches");
+              console.log("\x1b[31m", "\nYOU ARE NOT ON A STORY BRANCH\n");
+              console.log("\x1b[36m%s\x1b[0m", "ALL STORY BRANCHES:\n");
+
+              var list = await shell
+                .exec(`git branch -a | grep story/`)
+                .split("\n")
+                .map((branch) => branch.trim())
+                .filter(
+                  (branch) =>
+                    branch.includes("story/CTDEV-") &&
+                    branch.lastIndexOf("story/CTDEV-") === 0
+                );
+
+              console.log(
+                "\x1b[36m%s\x1b[0m",
+                "\nLocal stories available: ",
+                list,
+                "\n"
+              );
+
+              if (list.length !== 0) {
+                var spawn = require("child_process").spawn;
+                var output = await spawn(
+                  "sh",
+                  [`./bin/story_finish.sh`, list.toString().replace(",", " ")],
+                  {
+                    stdio: "inherit",
+                  }
+                );
+              } else {
+                console.log("\x1b[31m", "ERROR: There are no story branches");
+              }
             }
           },
         });
@@ -276,7 +291,7 @@ const options = yargs
           },
         })
         .command({
-          command: "finish <jiraId> <name>",
+          command: "finish [jiraId] [name]",
           describe:
             "Merges the indicated bugfix branch to develop and deletes it.",
           handler: async (argv) => {
@@ -300,6 +315,25 @@ const options = yargs
                 "\x1b[33m",
                 `git branch -d bugfix/CTDEV-${argv.jiraId}_${argv.name}`
               );
+            } else if (!argv.name && !argv.jiraId) {
+              console.log("\x1b[36m%s\x1b[0m", "CURRENT BRANCH:\n");
+              var output = shell.exec(`git branch --show-current`);
+
+              if (output.toString().startsWith("bugfix/CTDEV-", 0)) {
+                shell.exec(`git checkout develop`);
+                shell.exec(`git merge --no-ff ${output}`);
+                shell.exec(`git branch -d ${output}`);
+                console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
+                console.log("\x1b[33m", `\ngit branch --show-current`);
+                console.log("\x1b[33m", `\ngit checkout develop`);
+                console.log("\x1b[33m", `git merge --no-ff ${output}`);
+                console.log("\x1b[33m", `git branch -d ${output}`);
+              } else {
+                console.log(
+                  "\x1b[31m",
+                  "\nERROR: YOU ARE NOT ON A BUGFIX BRANCH"
+                );
+              }
             }
           },
         });
@@ -362,7 +396,7 @@ const options = yargs
           },
         })
         .command({
-          command: "finish <jiraId> <name>",
+          command: "finish [jiraId] [name]",
           describe:
             "Merges the indicated single branch to develop and deletes it.",
           handler: async (argv) => {
@@ -386,6 +420,25 @@ const options = yargs
                 "\x1b[33m",
                 `git branch -d single/CTDEV-${argv.jiraId}_${argv.name}`
               );
+            } else if (!argv.name && !argv.jiraId) {
+              console.log("\x1b[36m%s\x1b[0m", "CURRENT BRANCH:\n");
+              var output = shell.exec(`git branch --show-current`);
+
+              if (output.toString().startsWith("single/CTDEV-", 0)) {
+                shell.exec(`git checkout develop`);
+                shell.exec(`git merge --no-ff ${output}`);
+                shell.exec(`git branch -d ${output}`);
+                console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
+                console.log("\x1b[33m", `\ngit branch --show-current`);
+                console.log("\x1b[33m", `\ngit checkout develop`);
+                console.log("\x1b[33m", `git merge --no-ff ${output}`);
+                console.log("\x1b[33m", `git branch -d ${output}`);
+              } else {
+                console.log(
+                  "\x1b[31m",
+                  "\nERROR: YOU ARE NOT ON A SINGLE BRANCH"
+                );
+              }
             }
           },
         });
@@ -448,7 +501,7 @@ const options = yargs
           },
         })
         .command({
-          command: "finish <jiraId> <name>",
+          command: "finish [jiraId] [name]",
           describe:
             "Merges the indicated hotfix branch to master and deletes it.",
           handler: async (argv) => {
@@ -472,6 +525,25 @@ const options = yargs
                 "\x1b[33m",
                 `git branch -d hotfix/CTDEV-${argv.jiraId}_${argv.name}`
               );
+            } else if (!argv.name && !argv.jiraId) {
+              console.log("\x1b[36m%s\x1b[0m", "CURRENT BRANCH:\n");
+              var output = shell.exec(`git branch --show-current`);
+
+              if (output.toString().startsWith("hotfix/CTDEV-", 0)) {
+                shell.exec(`git checkout master`);
+                shell.exec(`git merge --no-ff ${output}`);
+                shell.exec(`git branch -d ${output}`);
+                console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
+                console.log("\x1b[33m", `\ngit branch --show-current`);
+                console.log("\x1b[33m", `\ngit checkout master`);
+                console.log("\x1b[33m", `git merge --no-ff ${output}`);
+                console.log("\x1b[33m", `git branch -d ${output}`);
+              } else {
+                console.log(
+                  "\x1b[31m",
+                  "\nERROR: YOU ARE NOT ON A HOTFIX BRANCH"
+                );
+              }
             }
           },
         });
