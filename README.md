@@ -12,4 +12,3 @@ A personal CLI tool similar to git flow.
 # TODO
 
 1. Cleanup console colors, after certain commands the color stays on the console.
-2. Use branch reference on finishing epics or stories instead of passing arguments.
