@@ -74,7 +74,7 @@ const options = yargs
           },
         })
         .command({
-          command: "finish <jiraId> <name>",
+          command: "finish [jiraId] [name]",
           describe:
             "Merges the indicated epic branch to develop and deletes it.",
           handler: async (argv) => {
@@ -98,6 +98,25 @@ const options = yargs
                 "\x1b[33m",
                 `git branch -d epic/CTDEV-${argv.jiraId}_${argv.name}`
               );
+            } else if (!argv.name && !argv.jiraId) {
+              console.log("\x1b[36m%s\x1b[0m", "CURRENT BRANCH:\n");
+              var output = shell.exec(`git branch --show-current`);
+
+              if (output.toString().startsWith("epic/CTDEV-", 0)) {
+                shell.exec(`git checkout develop`);
+                shell.exec(`git merge --no-ff ${output}`);
+                shell.exec(`git branch -d ${output}`);
+                console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
+                console.log("\x1b[33m", `\ngit branch --show-current`);
+                console.log("\x1b[33m", `\ngit checkout develop`);
+                console.log("\x1b[33m", `git merge --no-ff ${output}`);
+                console.log("\x1b[33m", `git branch -d ${output}`);
+              } else {
+                console.log(
+                  "\x1b[31m",
+                  "\nERROR: YOU ARE NOT ON AN EPIC BRANCH"
+                );
+              }
             }
           },
         });
