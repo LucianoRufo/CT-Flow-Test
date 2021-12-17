@@ -1,9 +1,14 @@
 #! /usr/bin/env node
 const yargs = require("yargs");
 const init = require("./init");
+const {
+  epicStart,
+  epicPublish,
+  epicFinish,
+  epicHandleError,
+} = require("./epic");
 
 var shell = require("shelljs");
-const { start } = require("./epic");
 const usage = "\nUsage: ctflow <subcommand>";
 
 const options = yargs
@@ -22,87 +27,21 @@ const options = yargs
         .command({
           command: "start <jiraId> <name>",
           describe: "Starts an epic branch based on develop.",
-          handler: start,
+          handler: epicStart,
         })
         .command({
           command: "publish <jiraId> <name>",
           describe: "Pushes the epic branch to origin.",
-          handler: async (argv) => {
-            if (argv.name && argv.jiraId) {
-              console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
-              shell.exec(`git checkout epic/CTDEV-${argv.jiraId}_${argv.name}`);
-              shell.exec(
-                `git push origin epic/CTDEV-${argv.jiraId}_${argv.name}`
-              );
-
-              console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-              console.log(
-                "\x1b[33m",
-                `\ngit checkout epic/CTDEV-${argv.jiraId}_${argv.name}`
-              );
-              console.log(
-                "\x1b[33m",
-                `git push origin epic/CTDEV-${argv.jiraId}_${argv.name}`
-              );
-            }
-          },
+          handler: epicPublish,
         })
         .command({
           command: "finish [jiraId] [name]",
           describe:
             "Merges the indicated epic branch to develop and deletes it.",
-          handler: async (argv) => {
-            if (argv.name && argv.jiraId) {
-              console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
-              shell.exec(`git checkout develop`);
-              shell.exec(
-                `git merge --no-ff epic/CTDEV-${argv.jiraId}_${argv.name}`
-              );
-              shell.exec(
-                `git branch -d epic/CTDEV-${argv.jiraId}_${argv.name}`
-              );
-
-              console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:\n");
-              console.log("\x1b[33m", `git checkout develop`);
-              console.log(
-                "\x1b[33m",
-                `git merge --no-ff epic/CTDEV-${argv.jiraId}_${argv.name}`
-              );
-              console.log(
-                "\x1b[33m",
-                `git branch -d epic/CTDEV-${argv.jiraId}_${argv.name}`
-              );
-            } else if (!argv.name && !argv.jiraId) {
-              console.log("\x1b[36m%s\x1b[0m", "CURRENT BRANCH:\n");
-              var output = shell.exec(`git branch --show-current`);
-
-              if (output.toString().startsWith("epic/CTDEV-", 0)) {
-                shell.exec(`git checkout develop`);
-                shell.exec(`git merge --no-ff ${output}`);
-                shell.exec(`git branch -d ${output}`);
-                console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-                console.log("\x1b[33m", `\ngit branch --show-current`);
-                console.log("\x1b[33m", `\ngit checkout develop`);
-                console.log("\x1b[33m", `git merge --no-ff ${output}`);
-                console.log("\x1b[33m", `git branch -d ${output}`);
-              } else {
-                console.log(
-                  "\x1b[31m",
-                  "\nERROR: YOU ARE NOT ON AN EPIC BRANCH"
-                );
-              }
-            }
-          },
+          handler: epicFinish,
         });
     },
-    handler: async (argv) => {
-      console.log("\x1b[31m", "\nERROR: NO SUBCOMMAND SPECIFIED");
-      console.log("\x1b[37m", "\nusage: ctflow epic start");
-      console.log("or: ctflow epic finish");
-      console.log("or: ctflow epic publish");
-      console.log("\nManage your epic branches.");
-      console.log("For more specific help type the command followed by --help");
-    },
+    handler: epicHandleError,
   })
   .command({
     command: "story",
