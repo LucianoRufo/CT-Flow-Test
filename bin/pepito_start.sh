@@ -23,7 +23,7 @@ printf "GIT OUTPUT:"
 echo
 printf ${YELLOW}
 echo
-git checkout -b story/$epicId/CTDEV-$2_$3 $epic
+git checkout -b pepito/$epicId/CTDEV-$2_$3 $epic
 echo 
 echo 
 
@@ -34,4 +34,4 @@ echo
 
 printf ${YELLOW}
 echo "git branch -a | grep epic/"
-echo "git checkout -b story/$epicId/CTDEV-$2_$3 $epic"
+echo "git checkout -b pepito/$epicId/CTDEV-$2_$3 $epic"

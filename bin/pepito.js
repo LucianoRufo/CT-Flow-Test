@@ -20,7 +20,7 @@ async function start(argv) {
       var output = await spawn(
         "sh",
         [
-          `./bin/story_start.sh`,
+          `./bin/pepito_start.sh`,
           list.toString().replace(",", " "),
           argv.jiraId,
           argv.name,
@@ -41,7 +41,7 @@ async function finish(argv) {
   console.log("\x1b[36m%s\x1b[0m", "CURRENT BRANCH:\n");
   var output = shell.exec(`git branch --show-current`);
 
-  if (output.toString().startsWith("story/CTDEV-", 0)) {
+  if (output.toString().startsWith("pepito/CTDEV-", 0)) {
     shell.exec(`git checkout develop`);
     shell.exec(`git merge --no-ff ${output}`);
     shell.exec(`git branch -d ${output}`);
@@ -51,17 +51,17 @@ async function finish(argv) {
     console.log("\x1b[33m", `git merge --no-ff ${output}`);
     console.log("\x1b[33m", `git branch -d ${output}`);
   } else {
-    console.log("\x1b[31m", "\nYOU ARE NOT ON A STORY BRANCH\n");
-    console.log("\x1b[36m%s\x1b[0m", "ALL STORY BRANCHES:\n");
+    console.log("\x1b[31m", "\nYOU ARE NOT ON A pepito BRANCH\n");
+    console.log("\x1b[36m%s\x1b[0m", "ALL pepito BRANCHES:\n");
 
     var list = await shell
-      .exec(`git branch -a | grep story/`)
+      .exec(`git branch -a | grep pepito/`)
       .split("\n")
       .map((branch) => branch.trim())
       .filter(
         (branch) =>
-          branch.includes("story/CTDEV-") &&
-          branch.lastIndexOf("story/CTDEV-") === 0
+          branch.includes("pepito/CTDEV-") &&
+          branch.lastIndexOf("pepito/CTDEV-") === 0
       );
 
     console.log("\x1b[36m%s\x1b[0m", "\nLocal stories available: ", list, "\n");
@@ -70,28 +70,28 @@ async function finish(argv) {
       var spawn = require("child_process").spawn;
       var output = await spawn(
         "sh",
-        [`./bin/story_finish.sh`, list.toString().replace(",", " ")],
+        [`./bin/pepito_finish.sh`, list.toString().replace(",", " ")],
         {
           stdio: "inherit",
         }
       );
     } else {
-      console.log("\x1b[31m", "ERROR: There are no story branches");
+      console.log("\x1b[31m", "ERROR: There are no pepito branches");
     }
   }
 }
 
 async function handleError(argv) {
   console.log("\x1b[31m", "\nERROR: NO SUBCOMMAND SPECIFIED");
-  console.log("\x1b[37m", "\nusage: ctflow story start");
-  console.log("or: ctflow story finish");
-  console.log("or: ctflow story publish");
-  console.log("\nManage your story branches.");
+  console.log("\x1b[37m", "\nusage: ctflow pepito start");
+  console.log("or: ctflow pepito finish");
+  console.log("or: ctflow pepito publish");
+  console.log("\nManage your pepito branches.");
   console.log("For more specific help type the command followed by --help");
 }
 
 module.exports = {
-  storyStart: start,
-  storyFinish: finish,
-  storyHandleError: handleError,
+  pepitoStart: start,
+  pepitoFinish: finish,
+  pepitoHandleError: handleError,
 };

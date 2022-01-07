@@ -6,11 +6,11 @@ WHITE='\033[1;37m'
 YELLOW='\033[1;33m'
 
 printf ${LIGHTGREEN}
-echo "Please select a story:"
+echo "Please select a pepito:"
 printf ${WHITE}
-select story in $1
+select pepito in $1
 do 
-    echo $REPLY "You picked: $story"
+    echo $REPLY "You picked: $pepito"
     break
 done   
 
@@ -22,9 +22,9 @@ printf ${YELLOW}
 echo
 git checkout develop
 echo 
-git merge --no-ff $story
+git merge --no-ff $pepito
 echo 
-git branch -d $story
+git branch -d $pepito
 echo 
 echo 
 
@@ -34,8 +34,8 @@ echo
 echo 
 
 printf ${YELLOW}
-echo "git branch -a | grep story/"
+echo "git branch -a | grep pepito/"
 echo "git checkout develop"
-echo "git merge --no-ff $story"
-echo "git branch -d $story"
+echo "git merge --no-ff $pepito"
+echo "git branch -d $pepito"
 echo "git checkout develop"

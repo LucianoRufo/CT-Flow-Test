@@ -9,7 +9,7 @@ const {
 } = require("./epic");
 
 var shell = require("shelljs");
-const { storyStart, storyFinish, storyHandleError } = require("./story");
+const { pepitoStart, pepitoFinish, pepitoHandleError } = require("./pepito");
 const {
   bugfixStart,
   bugfixPublish,
@@ -63,23 +63,23 @@ const options = yargs
     handler: epicHandleError,
   })
   .command({
-    command: "story",
-    describe: "Manage your story branches.",
+    command: "pepito",
+    describe: "Manage your pepito branches.",
     builder: (yargs) => {
       yargs
         .command({
           command: "start <jiraId> <name>",
-          describe: "Starts a story branch based on an indicated epic.",
-          handler: storyStart,
+          describe: "Starts a pepito branch based on an indicated epic.",
+          handler: pepitoStart,
         })
         .command({
           command: "finish",
           describe:
-            "Merges the indicated story branch to develop and deletes it.",
-          handler: storyFinish,
+            "Merges the indicated pepito branch to develop and deletes it.",
+          handler: pepitoFinish,
         });
     },
-    handler: storyHandleError,
+    handler: pepitoHandleError,
   })
   .command({
     command: "bugfix",
