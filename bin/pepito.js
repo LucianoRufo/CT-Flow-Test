@@ -7,19 +7,15 @@ async function start(argv) {
       console.log("\x1b[36m%s\x1b[0m", "ALL EPIC BRANCHES:\n");
 
       let list = await shell
-        .exec(`git branch -a | grep epic/`)
+        .exec(`git branch -a | grep epic/CTDEV-`)
         .split("\n")
-        .map((branch) => branch.trim())
-        .filter(
-          (branch) =>
-            branch.includes("epic/CTDEV-") &&
-            branch.lastIndexOf("epic/CTDEV-") === 0
-        );
+        .map((branch) => branch.trim());
+      list.pop();
 
       console.log("\x1b[36m%s\x1b[0m", "\nLocal epics available: ", list, "\n");
       if (list.length !== 0) {
         let spawn = require("child_process").spawn;
-        let output = await spawn(
+        await spawn(
           "sh",
           [
             `./bin/pepito_start.sh`,
@@ -54,7 +50,7 @@ async function start(argv) {
       );
       console.log(
         "\x1b[33m",
-        `git push origin develop pepito/${argv.jiraId}_${argv.name}`
+        `git push origin develop pepito/CTDEV-${argv.jiraId}_${argv.name}`
       );
     }
   } else {
