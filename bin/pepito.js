@@ -1,4 +1,4 @@
-var shell = require("shelljs");
+let shell = require("shelljs");
 
 async function start(argv) {
   console.log(argv);
@@ -6,7 +6,7 @@ async function start(argv) {
     if (argv.epic) {
       console.log("\x1b[36m%s\x1b[0m", "ALL EPIC BRANCHES:\n");
 
-      var list = await shell
+      let list = await shell
         .exec(`git branch -a | grep epic/`)
         .split("\n")
         .map((branch) => branch.trim())
@@ -18,8 +18,8 @@ async function start(argv) {
 
       console.log("\x1b[36m%s\x1b[0m", "\nLocal epics available: ", list, "\n");
       if (list.length !== 0) {
-        var spawn = require("child_process").spawn;
-        var output = await spawn(
+        let spawn = require("child_process").spawn;
+        let output = await spawn(
           "sh",
           [
             `./bin/pepito_start.sh`,
@@ -39,7 +39,7 @@ async function start(argv) {
       shell.exec(`git checkout develop`);
       shell.exec(`git fetch`);
       shell.exec(`git pull --rebase origin develop`);
-      shell.exec(`git checkout -b `);
+      shell.exec(`git checkout -b pepito/CTDEV-${argv.jiraId}_${argv.name}`);
       shell.exec(
         `git push origin develop pepito/CTDEV-${argv.jiraId}_${argv.name}`
       );
@@ -48,7 +48,10 @@ async function start(argv) {
       console.log("\x1b[33m", `\ngit checkout develop`);
       console.log("\x1b[33m", `git fetch`);
       console.log("\x1b[33m", `git pull --rebase origin develop`);
-      console.log("\x1b[33m", `git checkout -b`);
+      console.log(
+        "\x1b[33m",
+        `git checkout -b pepito/CTDEV-${argv.jiraId}_${argv.name}`
+      );
       console.log(
         "\x1b[33m",
         `git push origin develop pepito/${argv.jiraId}_${argv.name}`
@@ -62,46 +65,44 @@ async function start(argv) {
 async function publish(argv) {}
 
 async function finish(argv) {
-  console.log("\x1b[36m%s\x1b[0m", "CURRENT BRANCH:\n");
-  var output = shell.exec(`git branch --show-current`);
+  let validInput;
+  let epicName;
+  let branchName = shell.exec(`git branch --show-current`);
 
-  if (output.toString().startsWith("pepito/CTDEV-", 0)) {
+  if (argv.jiraId && !argv.name) {
+    console.log("\x1b[31m", "ERROR: Missing complete branch name");
+    validInput = false;
+  }
+
+  if (validInput) {
+    argv.jiraId
+      ? shell.exec(`git checkout ${argv.name}`)
+      : console.log(
+          "\x1b[36m%s\x1b[0m",
+          `Finishing current branch:${branchName}\n`
+        );
+  }
+
+  if (branchName.toString().startsWith("pepito/epic-", 0)) {
+    epicName = branchName.toString().split("/")[1].replace("-", "/");
+    shell.exec(`git checkout ${epicName}`);
+    shell.exec(`git merge --no-ff ${branchName}`);
+    shell.exec(`git branch -d ${branchName}`);
+
+    console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:\n");
+    console.log("\x1b[33m", `git branch --show-current`);
+    console.log("\x1b[33m", `git checkout ${epicName}`);
+    console.log("\x1b[33m", `git merge --no-ff ${branchName}`);
+    console.log("\x1b[33m", `git branch -d ${branchName}`);
+  } else {
     shell.exec(`git checkout develop`);
-    shell.exec(`git merge --no-ff ${output}`);
-    shell.exec(`git branch -d ${output}`);
+    shell.exec(`git merge --no-ff ${branchName}`);
+    shell.exec(`git branch -d ${branchName}`);
     console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:\n");
     console.log("\x1b[33m", `git branch --show-current`);
     console.log("\x1b[33m", `git checkout develop`);
-    console.log("\x1b[33m", `git merge --no-ff ${output}`);
-    console.log("\x1b[33m", `git branch -d ${output}`);
-  } else {
-    console.log("\x1b[31m", "\nYOU ARE NOT ON A pepito BRANCH\n");
-    console.log("\x1b[36m%s\x1b[0m", "ALL pepito BRANCHES:\n");
-
-    var list = await shell
-      .exec(`git branch -a | grep pepito/`)
-      .split("\n")
-      .map((branch) => branch.trim())
-      .filter(
-        (branch) =>
-          branch.includes("pepito/CTDEV-") &&
-          branch.lastIndexOf("pepito/CTDEV-") === 0
-      );
-
-    console.log("\x1b[36m%s\x1b[0m", "\nLocal stories available: ", list, "\n");
-
-    if (list.length !== 0) {
-      var spawn = require("child_process").spawn;
-      var output = await spawn(
-        "sh",
-        [`./bin/pepito_finish.sh`, list.toString().replace(",", " ")],
-        {
-          stdio: "inherit",
-        }
-      );
-    } else {
-      console.log("\x1b[31m", "ERROR: There are no pepito branches");
-    }
+    console.log("\x1b[33m", `git merge --no-ff ${branchName}`);
+    console.log("\x1b[33m", `git branch -d ${branchName}`);
   }
 }
 
