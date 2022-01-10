@@ -79,7 +79,7 @@ const options = yargs
           type: "boolean",
         })
         .command({
-          command: "finish [jiraId] [name]",
+          command: "finish [name]",
           describe:
             "Merges the indicated pepito branch to develop and deletes it.",
           handler: pepitoFinish,
