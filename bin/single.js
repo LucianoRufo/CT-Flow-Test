@@ -1,4 +1,4 @@
-var shell = require("shelljs");
+let shell = require("shelljs");
 
 async function start(argv) {
   if (argv.name && argv.jiraId) {
@@ -52,7 +52,7 @@ async function finish(argv) {
     );
   } else if (!argv.name && !argv.jiraId) {
     console.log("\x1b[36m%s\x1b[0m", "CURRENT BRANCH:\n");
-    var output = shell.exec(`git branch --show-current`);
+    let output = shell.exec(`git branch --show-current`);
 
     if (output.toString().startsWith("single/CTDEV-", 0)) {
       shell.exec(`git checkout develop`);

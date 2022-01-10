@@ -8,7 +8,6 @@ const {
   epicHandleError,
 } = require("./epic");
 
-var shell = require("shelljs");
 const { pepitoStart, pepitoFinish, pepitoHandleError } = require("./pepito");
 const {
   bugfixStart,
