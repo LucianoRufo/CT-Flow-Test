@@ -43,17 +43,12 @@ const options = yargs
     builder: (yargs) => {
       yargs
         .command({
-          command: "start <jiraId> <name>",
+          command: "start <jiraId>",
           describe: "Starts an epic branch based on develop.",
           handler: epicStart,
         })
         .command({
-          command: "publish <jiraId> <name>",
-          describe: "Pushes the epic branch to origin.",
-          handler: epicPublish,
-        })
-        .command({
-          command: "finish [jiraId] [name]",
+          command: "finish [jiraId]",
           describe:
             "Merges the indicated epic branch to develop and deletes it.",
           handler: epicFinish,
