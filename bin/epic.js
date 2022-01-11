@@ -49,7 +49,6 @@ async function handleError(argv) {
   console.log("\x1b[31m", "\nERROR: NO SUBCOMMAND SPECIFIED");
   console.log("\x1b[37m", "\nusage: ctflow epic start");
   console.log("or: ctflow epic finish");
-  console.log("or: ctflow epic publish");
   console.log("\nManage your epic branches.");
   console.log("For more specific help type the command followed by --help");
 }

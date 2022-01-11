@@ -5,6 +5,11 @@ const init = require("./init");
 const { epicStart, epicFinish, epicHandleError } = require("./epic");
 const { pepitoStart, pepitoFinish, pepitoHandleError } = require("./pepito");
 const { hotfixStart, hotfixFinish, hotfixHandleError } = require("./hotfix");
+const {
+  releaseStart,
+  releaseFinish,
+  releaseHandleError,
+} = require("./release");
 
 const usage = "\nUsage: ctflow <subcommand>";
 
@@ -84,6 +89,21 @@ const options = yargs
   .command({
     command: "release",
     describe: "Manage your release branches. #TODO",
+    builder: (yargs) => {
+      yargs
+        .command({
+          command: "start <tag>",
+          describe: "Starts an release branch based on master.",
+          handler: releaseStart,
+        })
+        .command({
+          command: "finish [tag]",
+          describe:
+            "Merges the indicated release branch to master and deletes it.",
+          handler: releaseFinish,
+        });
+    },
+    handler: releaseHandleError,
   })
   .epilogue("Try 'ctflow <subcommand> --help' for details.")
   .help(true).argv;
