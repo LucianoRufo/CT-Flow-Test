@@ -9,18 +9,7 @@ const {
 } = require("./epic");
 
 const { pepitoStart, pepitoFinish, pepitoHandleError } = require("./pepito");
-const {
-  bugfixStart,
-  bugfixPublish,
-  bugfixFinish,
-  bugfixHandleError,
-} = require("./bugfix");
-const {
-  singleHandleError,
-  singleFinish,
-  singlePublish,
-  singleStart,
-} = require("./single");
+
 const {
   hotfixStart,
   hotfixPublish,
@@ -83,56 +72,8 @@ const options = yargs
     handler: pepitoHandleError,
   })
   .command({
-    command: "bugfix",
-    describe: "Manage your bugfix branches.",
-    builder: (yargs) => {
-      yargs
-        .command({
-          command: "start <jiraId> <name>",
-          describe: "Starts an bugfix branch based on develop.",
-          handler: bugfixStart,
-        })
-        .command({
-          command: "publish <jiraId> <name>",
-          describe: "Pushes the bugfix branch to origin.",
-          handler: bugfixPublish,
-        })
-        .command({
-          command: "finish [jiraId] [name]",
-          describe:
-            "Merges the indicated bugfix branch to develop and deletes it.",
-          handler: bugfixFinish,
-        });
-    },
-    handler: bugfixHandleError,
-  })
-  .command({
-    command: "single",
-    describe: "Manage your single branches.",
-    builder: (yargs) => {
-      yargs
-        .command({
-          command: "start <jiraId> <name>",
-          describe: "Starts an single branch based on develop.",
-          handler: singleStart,
-        })
-        .command({
-          command: "publish <jiraId> <name>",
-          describe: "Pushes the single branch to origin.",
-          handler: singlePublish,
-        })
-        .command({
-          command: "finish [jiraId] [name]",
-          describe:
-            "Merges the indicated single branch to develop and deletes it.",
-          handler: singleFinish,
-        });
-    },
-    handler: singleHandleError,
-  })
-  .command({
     command: "hotfix",
-    describe: "Manage your hotfix branches.",
+    describe: "Manage your hotfix branches. #TODO",
     builder: (yargs) => {
       yargs
         .command({
