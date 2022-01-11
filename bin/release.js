@@ -2,6 +2,7 @@ let shell = require("shelljs");
 
 async function start(argv) {
   if (argv.tag) {
+    //TODO: Releases can be dangerous, check for existing tags, maybe even auto assign it
     console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
     shell.exec(`git checkout master`);
     shell.exec(`git pull --rebase origin master`);
