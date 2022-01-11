@@ -101,8 +101,6 @@ async function start(argv) {
   }
 }
 
-async function publish(argv) {}
-
 async function finish(argv) {
   let validInput = true;
   let epicName;

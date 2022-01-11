@@ -3,32 +3,18 @@ let shell = require("shelljs");
 async function start(argv) {
   if (argv.name && argv.jiraId) {
     console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
+    shell.exec(`git checkout master`);
+    shell.exec(`git pull --rebase origin master`);
     shell.exec(
       `git checkout -b hotfix/CTDEV-${argv.jiraId}_${argv.name} master`
     );
 
     console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
+    console.log("\x1b[33m", `\ngit checkout master`);
+    console.log("\x1b[33m", `\ngit pull --rebase origin master`);
     console.log(
       "\x1b[33m",
       `\ngit checkout -b hotfix/CTDEV-${argv.jiraId}_${argv.name} master`
-    );
-  }
-}
-
-async function publish(argv) {
-  if (argv.name && argv.jiraId) {
-    console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
-    shell.exec(`git checkout hotfix/CTDEV-${argv.jiraId}_${argv.name}`);
-    shell.exec(`git push origin hotfix/CTDEV-${argv.jiraId}_${argv.name}`);
-
-    console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-    console.log(
-      "\x1b[33m",
-      `\ngit checkout hotfix/CTDEV-${argv.jiraId}_${argv.name}`
-    );
-    console.log(
-      "\x1b[33m",
-      `git push origin hotfix/CTDEV-${argv.jiraId}_${argv.name}`
     );
   }
 }
@@ -80,7 +66,6 @@ async function handleError(argv) {
 
 module.exports = {
   hotfixStart: start,
-  hotfixPublish: publish,
   hotfixFinish: finish,
   hotfixHandleError: handleError,
 };

@@ -1,21 +1,11 @@
 #! /usr/bin/env node
 const yargs = require("yargs");
 const init = require("./init");
-const {
-  epicStart,
-  epicPublish,
-  epicFinish,
-  epicHandleError,
-} = require("./epic");
 
+const { epicStart, epicFinish, epicHandleError } = require("./epic");
 const { pepitoStart, pepitoFinish, pepitoHandleError } = require("./pepito");
+const { hotfixStart, hotfixFinish, hotfixHandleError } = require("./hotfix");
 
-const {
-  hotfixStart,
-  hotfixPublish,
-  hotfixFinish,
-  hotfixHandleError,
-} = require("./hotfix");
 const usage = "\nUsage: ctflow <subcommand>";
 
 const options = yargs
@@ -23,7 +13,8 @@ const options = yargs
   .scriptName("ctflow")
   .command({
     command: "init",
-    describe: "Initialize a new git repo with CT-FLOW support.",
+    describe:
+      "Initialize a new git repo with CT-FLOW support. #TODO refactor and make CTDEV- prefix a custom setting, also be careful with master/main, should cover both scenarios",
     handler: init,
   })
   .command({
@@ -80,11 +71,6 @@ const options = yargs
           command: "start <jiraId> <name>",
           describe: "Starts an hotfix branch based on master.",
           handler: hotfixStart,
-        })
-        .command({
-          command: "publish <jiraId> <name>",
-          describe: "Pushes the hotfix branch to origin.",
-          handler: hotfixPublish,
         })
         .command({
           command: "finish [jiraId] [name]",
