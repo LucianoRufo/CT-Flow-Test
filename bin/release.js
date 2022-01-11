@@ -2,16 +2,30 @@ let shell = require("shelljs");
 
 async function start(argv) {
   if (argv.tag) {
-    //TODO: Releases can be dangerous, check for existing tags, maybe even auto assign it
-    console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
-    shell.exec(`git checkout master`);
-    shell.exec(`git pull --rebase origin master`);
-    shell.exec(`git checkout -b release/${argv.tag} master`);
+    console.log("\x1b[36m%s\x1b[0m", "RELEASE LIST:\n");
 
-    console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-    console.log("\x1b[33m", `\ngit checkout master`);
-    console.log("\x1b[33m", `\ngit pull --rebase origin master`);
-    console.log("\x1b[33m", `\ngit checkout -b release/${argv.tag} master`);
+    let list = await shell
+      .exec(`git branch -a | grep release/`)
+      .split("\n")
+      .map((branch) => branch.trim());
+    list.pop();
+
+    if (
+      list.includes(`release/${argv.tag}`) ||
+      list.includes(`remotes/origin/release/${argv.tag}`)
+    ) {
+      console.log("\x1b[31m", "\nERROR: THE TAG YOU INDICATED ALREADY EXISTS");
+    } else {
+      console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
+      shell.exec(`git checkout master`);
+      shell.exec(`git pull --rebase origin master`);
+      shell.exec(`git checkout -b release/${argv.tag} master`);
+
+      console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
+      console.log("\x1b[33m", `\ngit checkout master`);
+      console.log("\x1b[33m", `\ngit pull --rebase origin master`);
+      console.log("\x1b[33m", `\ngit checkout -b release/${argv.tag} master`);
+    }
   }
 }
 
