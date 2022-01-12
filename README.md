@@ -9,7 +9,7 @@ For this fact we decided to put our own flow on paper.
 
 This image is a first version of our baby.
 
-<img src="./images/CT_FLOW.jpg" alt="CT-FLOW"/>
+<img src="https://raw.githubusercontent.com/LucianoRufo/CT-Flow-Test/develop/images/CT_FLOW.jpg" alt="CT-FLOW"/>
 
 ## Installing Instructions
 
