@@ -1,4 +1,4 @@
-let shell = require("shelljs");
+const shell = require("shelljs");
 
 async function start(argv) {
   if (argv.name && argv.jiraId) {

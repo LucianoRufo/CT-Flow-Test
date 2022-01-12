@@ -1,6 +1,7 @@
 #! /usr/bin/env node
 const yargs = require("yargs");
 const init = require("./init");
+const shell = require("shelljs");
 
 const { epicStart, epicFinish, epicHandleError } = require("./epic");
 const { pepitoStart, pepitoFinish, pepitoHandleError } = require("./pepito");
@@ -104,6 +105,14 @@ const options = yargs
         });
     },
     handler: releaseHandleError,
+  })
+  .command({
+    command: "doc",
+    describe: "Opens the ctflow doc",
+    handler: () => {
+      console.log("doc");
+      shell.exec(`start ./images/CT_FLOW.jpg`);
+    },
   })
   .epilogue("Try 'ctflow <subcommand> --help' for details.")
   .help(true).argv;

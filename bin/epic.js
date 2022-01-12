@@ -1,4 +1,4 @@
-let shell = require("shelljs");
+const shell = require("shelljs");
 
 async function start(argv) {
   console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");

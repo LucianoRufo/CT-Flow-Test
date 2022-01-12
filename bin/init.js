@@ -1,4 +1,4 @@
-var shell = require("shelljs");
+const shell = require("shelljs");
 
 module.exports = function init({ flag }) {
   console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
