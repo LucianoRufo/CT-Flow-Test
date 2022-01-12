@@ -19,8 +19,7 @@ const options = yargs
   .scriptName("ctflow")
   .command({
     command: "init",
-    describe:
-      "Initialize a new git repo with CT-FLOW support. #TODO refactor and make CTDEV- prefix a custom setting, also be careful with master/main, should cover both scenarios",
+    describe: "Initialize a new git repo with CT-FLOW support.", // #TODO refactor and make CTDEV- prefix a custom setting, also be careful with master/main, should cover both scenarios
     handler: init,
   })
   .command({
@@ -70,7 +69,7 @@ const options = yargs
   })
   .command({
     command: "hotfix",
-    describe: "Manage your hotfix branches. #TODO",
+    describe: "Manage your hotfix branches. #WIP",
     builder: (yargs) => {
       yargs
         .command({
@@ -89,7 +88,7 @@ const options = yargs
   })
   .command({
     command: "release",
-    describe: "Manage your release branches. #TODO",
+    describe: "Manage your release branches. #WIP",
     builder: (yargs) => {
       yargs
         .command({
