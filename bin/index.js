@@ -14,7 +14,7 @@ const {
 
 const usage = "\nUsage: ctflow <subcommand>";
 
-const options = yargs
+yargs
   .usage(usage)
   .scriptName("ctflow")
   .command({
