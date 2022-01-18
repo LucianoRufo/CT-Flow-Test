@@ -111,7 +111,10 @@ async function finish(argv) {
   let branchName = shell.exec(`git branch --show-current`);
 
   if (!argv.name) {
-    console.log("\x1b[31m", "ERROR: Missing complete branch name");
+    console.log(
+      "\x1b[33m",
+      "WARNING: Missing name argument, will finish current branch if it is a pepito"
+    );
     validInput = false;
   }
 
@@ -125,9 +128,9 @@ async function finish(argv) {
     );
   }
 
-  if (branchName.toString().startsWith("pepito/epic/", 0)) {
+  if (branchName.toString().startsWith("pepito/epic", 0)) {
     let branchNameArray = branchName.toString().split("/");
-    epicName = branchNameArray[1] + `/${branchNameArray[2]}`;
+    epicName = branchNameArray[1].replace("-", "/");
     shell.exec(`git checkout ${epicName}`);
     shell.exec(`git merge --no-ff ${branchName}`);
     shell.exec(`git branch -d ${branchName}`);
