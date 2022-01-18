@@ -63,7 +63,7 @@ yargs
         .command({
           command: "finish [name]",
           describe:
-            "Merges the indicated pepito branch to develop and deletes it.",
+            "Merges the indicated pepito branch to develop or corresponding epic and deletes it.",
           handler: pepitoFinish,
         });
     },
