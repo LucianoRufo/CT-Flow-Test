@@ -14,11 +14,15 @@ async function start(argv) {
       console.log("\x1b[36m%s\x1b[0m", "\nLocal epics available: ", list, "\n");
       if (list.length !== 0) {
         let spawn = require("child_process").spawn;
+        let packagePath = await shell.exec(`npm config get prefix`);
+        packagePath = packagePath.trim().replace(/\\/g, "/");
+        let shFilePath = `${packagePath}/node_modules/ct-flow/bin/pepito_start.sh`;
+
         await spawn(
           "sh",
           [
-            `./bin/pepito_start.sh`,
-            list.toString().replace(",", " "),
+            shFilePath,
+            list.toString().replace(/,/g, " "),
             argv.jiraId,
             argv.name,
           ],
