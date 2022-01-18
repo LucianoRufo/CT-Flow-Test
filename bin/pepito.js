@@ -1,17 +1,15 @@
 const shell = require("shelljs");
+const {AllEpicBranches, AllLocalBranches} = require("./helpers/epicDisplayer")
+const {GetEpics} = require("./helpers/gitFunctions")
 
 async function start(argv) {
   if (argv.name && argv.jiraId) {
-    console.log("\x1b[36m%s\x1b[0m", "ALL EPIC BRANCHES:\n");
-
-    let list = await shell
-      .exec(`git branch -a | grep epic/CTDEV-`) //Already logs
-      .split("\n")
-      .map((branch) => branch.trim());
+    AllEpicBranches()
+    let list = await GetEpics()
     list.pop();
 
     if (argv.epic) {
-      console.log("\x1b[36m%s\x1b[0m", "\nLocal epics available: ", list, "\n");
+      AllLocalBranches()
       if (list.length !== 0) {
         let spawn = require("child_process").spawn;
         let packagePath = await shell.exec(`npm config get prefix`);
