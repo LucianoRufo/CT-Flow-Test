@@ -1,13 +1,11 @@
 const shell = require("shelljs");
+const {AllEpicBranches} = require("./helpers/epicDisplayer")
+const {GetEpics} = require("./helpers/gitFunctions")
 
 async function start(argv) {
   if (argv.name && argv.jiraId) {
-    console.log("\x1b[36m%s\x1b[0m", "ALL EPIC BRANCHES:\n");
-
-    let list = await shell
-      .exec(`git branch -a | grep epic/CTDEV-`) //Already logs
-      .split("\n")
-      .map((branch) => branch.trim());
+    AllEpicBranches()
+    let list = GetEpics()
     list.pop();
 
     if (argv.epic) {
