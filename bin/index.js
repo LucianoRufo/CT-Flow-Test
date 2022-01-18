@@ -51,12 +51,14 @@ yargs
           describe:
             "Starts a pepito branch based on an indicated epic or a single pepito from develop",
           handler: pepitoStart,
-        })
-        .option("e", {
-          alias: "epic",
-          describe: "Indicates that the pepito starts from an epic branch.",
-          default: false,
-          type: "boolean",
+          builder: (yargs) => {
+            yargs.option("e", {
+              alias: "epic",
+              describe: "Indicates that the pepito starts from an epic branch.",
+              default: false,
+              type: "boolean",
+            });
+          },
         })
         .command({
           command: "finish [name]",
