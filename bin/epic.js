@@ -1,44 +1,27 @@
 const shell = require("shelljs");
+const {StartDisplay, FinishDisplay, FinishFromEpicDisplay} = require("./helpers/epicDisplayer")
+const {MoveToDevelop} = require("./helpers/movers")
+const {MergeToDevelopCloseBranch, GetBranchName,MergeToDevelopCloseBranchFromBranch} = require("./helpers/gitFunctions")
+const {CurrentBranchMessage} = require("./helpers/comonDisplayer")
 
 async function start(argv) {
-  console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
-  shell.exec(`git checkout develop`);
-  shell.exec(`git pull --rebase origin develop`);
+  StartDisplay(argv)
+  MoveToDevelop()
   shell.exec(`git checkout -b epic/CTDEV-${argv.jiraId} develop`);
-
-  console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-  console.log("\x1b[33m", `\ngit checkout develop`);
-  console.log("\x1b[33m", `\git pull --rebase origin develop`);
-  console.log(
-    "\x1b[33m",
-    `\ngit checkout -b epic/CTDEV-${argv.jiraId} develop`
-  );
 }
 
 async function finish(argv) {
+  let branchName = GetBranchName().toString();
   if (argv.jiraId) {
-    console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
-    shell.exec(`git checkout develop`);
-    shell.exec(`git merge --no-ff epic/CTDEV-${argv.jiraId}`);
-    shell.exec(`git branch -d epic/CTDEV-${argv.jiraId}`);
-
-    console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:\n");
-    console.log("\x1b[33m", `git checkout develop`);
-    console.log("\x1b[33m", `git merge --no-ff epic/CTDEV-${argv.jiraId}`);
-    console.log("\x1b[33m", `git branch -d epic/CTDEV-${argv.jiraId}`);
+    MoveToDevelop()
+    MergeToDevelopCloseBranch(argv)
+    FinishDisplay(argv)
   } else {
-    console.log("\x1b[36m%s\x1b[0m", "CURRENT BRANCH:\n");
-    let branchName = shell.exec(`git branch --show-current`);
-
+    CurrentBranchMessage(branchName)
     if (branchName.toString().startsWith("epic/CTDEV-", 0)) {
-      shell.exec(`git checkout develop`);
-      shell.exec(`git merge --no-ff ${branchName}`);
-      shell.exec(`git branch -d ${branchName}`);
-      console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-      console.log("\x1b[33m", `\ngit branch --show-current`);
-      console.log("\x1b[33m", `\ngit checkout develop`);
-      console.log("\x1b[33m", `git merge --no-ff ${branchName}`);
-      console.log("\x1b[33m", `git branch -d ${branchName}`);
+      MoveToDevelop()
+      MergeToDevelopCloseBranchFromBranch(branchName)
+      FinishFromEpicDisplay(branchName)
     } else {
       console.log("\x1b[31m", "\nERROR: YOU ARE NOT ON AN EPIC BRANCH");
     }
