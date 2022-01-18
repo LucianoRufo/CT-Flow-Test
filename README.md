@@ -27,8 +27,8 @@ This image is a first version of our baby.
 
 ## Future releases
 
-1. Cleanup console colors, after certain commands the color stays on the console.
-2. Good documentation.
-3. Init to setup your own project prefix and not CTDEV-.
-4. Cool menues to make the cherry picks more friendly.
+1. Cool menues to make the cherry picks more friendly.
+2. Init to setup your own project prefix and not CTDEV-.
+3. Cleanup console colors, after certain commands the color stays on the console.
+4. Good documentation.
 5. Implement commitizen like commit automation.
