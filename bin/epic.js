@@ -1,18 +1,11 @@
 const shell = require("shelljs");
+const {startDisplay} = require("./helpers/epicDisplayer")
 
 async function start(argv) {
-  console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
+  startDisplay(argv)
   shell.exec(`git checkout develop`);
   shell.exec(`git pull --rebase origin develop`);
   shell.exec(`git checkout -b epic/CTDEV-${argv.jiraId} develop`);
-
-  console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-  console.log("\x1b[33m", `\ngit checkout develop`);
-  console.log("\x1b[33m", `\git pull --rebase origin develop`);
-  console.log(
-    "\x1b[33m",
-    `\ngit checkout -b epic/CTDEV-${argv.jiraId} develop`
-  );
 }
 
 async function finish(argv) {
