@@ -1,17 +1,23 @@
 const shell = require("shelljs");
+const {
+  AllEpicBranches,
+  AllLocalBranches,
+  NoEpics,
+} = require("./helpers/epicDisplayer");
+const { GetEpics } = require("./helpers/gitFunctions");
+const { BaseMessage } = require("./helpers/comonDisplayer");
+const { MoveToBranch } = require("./helpers/movers");
+const { IsFromEpic,CreatePepitosEpic } = require("./helpers/pepitosFunctions");
 
 async function start(argv) {
-  if (argv.name && argv.jiraId) {
-    console.log("\x1b[36m%s\x1b[0m", "ALL EPIC BRANCHES:\n");
-
-    let list = await shell
-      .exec(`git branch -a | grep epic/CTDEV-`) //Already logs
-      .split("\n")
-      .map((branch) => branch.trim());
+  const {name, jiraId, epic} = argv;
+  if (name && jiraId) {
+    AllEpicBranches();
+    let list = await GetEpics();
     list.pop();
 
-    if (argv.epic) {
-      console.log("\x1b[36m%s\x1b[0m", "\nLocal epics available: ", list, "\n");
+    if (epic) {
+      AllLocalBranches(list);
       if (list.length !== 0) {
         let spawn = require("child_process").spawn;
         let packagePath = await shell.exec(`npm config get prefix`);
@@ -23,33 +29,26 @@ async function start(argv) {
           [
             shFilePath,
             list.toString().replace(/,/g, " "),
-            argv.jiraId,
-            argv.name,
+            jiraId,
+            name,
           ],
           {
             stdio: "inherit",
           }
         );
       } else {
-        console.log("\x1b[31m", "ERROR: There are no epics");
+        NoEpics();
       }
     } else {
-      if (argv.name.toString().startsWith("pepito/epic-", 0)) {
-        let epicName = argv.name.split("/")[1].replace("-", "/CTDEV-");
+      if (!IsFromEpic(name)) {
+        let epicName = argv.name.split("/")[1].replace("-", "/CTDEV-")
         let pepitoName = argv.name.split("/")[2];
+        console.log(epicName);
 
         if (list.includes(epicName)) {
-          console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
-          shell.exec(`git checkout ${epicName}`);
-          shell.exec(`git fetch`);
-          shell.exec(`git pull --rebase origin ${epicName}`);
-          shell.exec(
-            `git checkout -b pepito/${epicName}/CTDEV-${argv.jiraId}_${pepitoName}`
-          );
-          shell.exec(
-            `git push origin ${epicName} pepito/${epicName}/CTDEV-${argv.jiraId}_${pepitoName}`
-          );
-
+          MoveToBranch(epicName);
+          CreatePepitosEpic({epicName, jiraId, pepitoName})
+      
           console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
           console.log("\x1b[33m", `\ngit checkout ${epicName}`);
           console.log("\x1b[33m", `git fetch`);

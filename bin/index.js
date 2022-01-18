@@ -111,7 +111,6 @@ yargs
     command: "doc",
     describe: "Opens the ctflow doc",
     handler: () => {
-      console.log("doc");
       shell.exec(`start ./images/CT_FLOW.jpg`);
     },
   })
