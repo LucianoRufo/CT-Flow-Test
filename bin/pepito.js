@@ -25,51 +25,52 @@ const {
 async function start(argv) {
   const { name, jiraId, epic } = argv;
   if (argv.name && argv.jiraId) {
-     let pepitoName = argv.name.split("/")[2];
-     if (name && jiraId) {
-     AllEpicBranches();
-     let list = await GetEpics();
-     list.pop();
+    let pepitoName = argv.name.split("/")[2];
+    if (name && jiraId) {
+      AllEpicBranches();
+      let list = await GetEpics();
+      list.pop();
 
-    if (epic) {
-      AllLocalBranches(list);
-      if (list.length !== 0) {
-        let spawn = require("child_process").spawn;
-        let packagePath = await shell.exec(`npm config get prefix`);
-        packagePath = packagePath.trim().replace(/\\/g, "/");
-        let shFilePath = `${packagePath}/node_modules/ct-flow/bin/pepito_start.sh`;
+      if (epic) {
+        AllLocalBranches(list);
+        if (list.length !== 0) {
+          let spawn = require("child_process").spawn;
+          let packagePath = await shell.exec(`npm config get prefix`);
+          packagePath = packagePath.trim().replace(/\\/g, "/");
+          let shFilePath = `${packagePath}/node_modules/ct-flow/bin/pepito_start.sh`;
 
-        await spawn(
-          "sh",
-          [shFilePath, list.toString().replace(/,/g, " "), jiraId, name],
-          {
-            stdio: "inherit",
-          }
-        );
-      } else {
-        NoEpics();
-      }
-    } else {
-      if (IsFromEpic(name)) {
-        let epicName = argv.name.split("/")[1].replace("-", "/CTDEV-");
-
-        if (list.includes(epicName)) {
-          MoveToBranch(epicName);
-          CreatePepitoFromEpic({ epicName, jiraId, pepitoName });
-          CreateEpicAndPepitoDisplayer({ epicName, jiraId, pepitoName });
+          await spawn(
+            "sh",
+            [shFilePath, list.toString().replace(/,/g, " "), jiraId, name],
+            {
+              stdio: "inherit",
+            }
+          );
         } else {
-          MoveToDevelop();
-          CreatpePepitosBranch(epicName);
-          CreatePepitoFromEpic({ epicName, jiraId, pepitoName });
-          CreateEpicAndPepitoDisplayer({ epicName, jiraId, pepitoName });
+          NoEpics();
         }
       } else {
-        CreatePepito({ jiraId, name });
-        CreatePepitoDisplayer({ jiraId, name });
+        if (IsFromEpic(name)) {
+          let epicName = argv.name.split("/")[1].replace("-", "/CTDEV-");
+
+          if (list.includes(epicName)) {
+            MoveToBranch(epicName);
+            CreatePepitoFromEpic({ epicName, jiraId, pepitoName });
+            CreateEpicAndPepitoDisplayer({ epicName, jiraId, pepitoName });
+          } else {
+            MoveToDevelop();
+            CreatpePepitosBranch(epicName);
+            CreatePepitoFromEpic({ epicName, jiraId, pepitoName });
+            CreateEpicAndPepitoDisplayer({ epicName, jiraId, pepitoName });
+          }
+        } else {
+          CreatePepito({ jiraId, name });
+          CreatePepitoDisplayer({ jiraId, name });
+        }
       }
+    } else {
+      console.log("\x1b[31m", "ERROR: Missing jiraId or name arguments.");
     }
-  } else {
-    console.log("\x1b[31m", "ERROR: Missing jiraId or name arguments.");
   }
 }
 
