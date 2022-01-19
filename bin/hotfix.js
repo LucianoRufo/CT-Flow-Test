@@ -1,4 +1,5 @@
 const shell = require("shelljs");
+const {MoveToBranch} = require("./helpers/movers")
 
 async function start(argv) {
   if (argv.name && argv.jiraId) {
@@ -24,34 +25,45 @@ async function finish(argv) {
     console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
     shell.exec(`git checkout master`);
     shell.exec(`git merge --no-ff hotfix/CTDEV-${argv.jiraId}_${argv.name}`);
-    shell.exec(`git branch -d hotfix/CTDEV-${argv.jiraId}_${argv.name}`);
 
-    console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-    console.log("\x1b[33m", `\ngit checkout master`);
-    console.log(
-      "\x1b[33m",
-      `git merge --no-ff hotfix/CTDEV-${argv.jiraId}_${argv.name}`
-    );
-    console.log(
-      "\x1b[33m",
-      `git branch -d hotfix/CTDEV-${argv.jiraId}_${argv.name}`
-    );
-  } else if (!argv.name && !argv.jiraId) {
-    console.log("\x1b[36m%s\x1b[0m", "CURRENT BRANCH:\n");
-    let branchName = shell.exec(`git branch --show-current`);
 
-    if (branchName.toString().startsWith("hotfix/CTDEV-", 0)) {
-      shell.exec(`git checkout master`);
-      shell.exec(`git merge --no-ff ${branchName}`);
-      shell.exec(`git branch -d ${branchName}`);
-      console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-      console.log("\x1b[33m", `\ngit branch --show-current`);
-      console.log("\x1b[33m", `\ngit checkout master`);
-      console.log("\x1b[33m", `git merge --no-ff ${branchName}`);
-      console.log("\x1b[33m", `git branch -d ${branchName}`);
-    } else {
-      console.log("\x1b[31m", "\nERROR: YOU ARE NOT ON A HOTFIX BRANCH");
+    if(true) {
+      MoveToBranch(`hotfix/CTDEV-${argv.jiraId}_${argv.name}`)
+      let data = await shell.exec(`git log --walk-reflogs hotfix/CTDEV-${argv.jiraId}_${argv.name}`)
+      console.log('---------------------',data.stdout)
+      console.log('---------------------')
     }
+
+
+
+  //   //shell.exec(`git branch -d hotfix/CTDEV-${argv.jiraId}_${argv.name}`);
+
+  //   console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
+  //   console.log("\x1b[33m", `\ngit checkout master`);
+  //   console.log(
+  //     "\x1b[33m",
+  //     `git merge --no-ff hotfix/CTDEV-${argv.jiraId}_${argv.name}`
+  //   );
+  //   console.log(
+  //     "\x1b[33m",
+  //     `git branch -d hotfix/CTDEV-${argv.jiraId}_${argv.name}`
+  //   );
+  // } else if (!argv.name && !argv.jiraId) {
+  //   console.log("\x1b[36m%s\x1b[0m", "CURRENT BRANCH:\n");
+  //   let branchName = shell.exec(`git branch --show-current`);
+
+  //   if (branchName.toString().startsWith("hotfix/CTDEV-", 0)) {
+  //     shell.exec(`git checkout master`);
+  //     shell.exec(`git merge --no-ff ${branchName}`);
+  //     shell.exec(`git branch -d ${branchName}`);
+  //     console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
+  //     console.log("\x1b[33m", `\ngit branch --show-current`);
+  //     console.log("\x1b[33m", `\ngit checkout master`);
+  //     console.log("\x1b[33m", `git merge --no-ff ${branchName}`);
+  //     console.log("\x1b[33m", `git branch -d ${branchName}`);
+  //   } else {
+  //     console.log("\x1b[31m", "\nERROR: YOU ARE NOT ON A HOTFIX BRANCH");
+  //   }
   }
 }
 
