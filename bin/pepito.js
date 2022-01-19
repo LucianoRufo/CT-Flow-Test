@@ -24,11 +24,12 @@ const {
 
 async function start(argv) {
   const { name, jiraId, epic } = argv;
-  let pepitoName = argv.name.split("/")[2];
-  if (name && jiraId) {
-    AllEpicBranches();
-    let list = await GetEpics();
-    list.pop();
+  if (argv.name && argv.jiraId) {
+     let pepitoName = argv.name.split("/")[2];
+     if (name && jiraId) {
+     AllEpicBranches();
+     let list = await GetEpics();
+     list.pop();
 
     if (epic) {
       AllLocalBranches(list);
