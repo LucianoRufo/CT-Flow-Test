@@ -1,18 +1,38 @@
 const shell = require("shelljs");
+const {
+  AllEpicBranches,
+  AllLocalBranches,
+  NoEpics,
+} = require("./helpers/epicDisplayer");
+const { GetEpics, GetBranchName } = require("./helpers/gitFunctions");
+const { MoveToBranch, MoveToDevelop } = require("./helpers/movers");
+const {
+  IsFromEpic,
+  CreatpePepitosBranch,
+  CreatePepitoFromEpic,
+  CreatePepito,
+  FinishPepito,
+} = require("./helpers/pepitosFunctions");
+const {
+  CreateEpicAndPepitoDisplayer,
+  CreatePepitoDisplayer,
+  DeleteSelfBranchWarning,
+  DeletingCurrentBranchDisplayer,
+  ClosePepitoOnEpicDisplayer,
+  HandleErrorDysplayer,
+} = require("./helpers/pepitosDisplayer");
 
 async function start(argv) {
+  const { name, jiraId, epic } = argv;
   if (argv.name && argv.jiraId) {
+     let pepitoName = argv.name.split("/")[2];
+     if (name && jiraId) {
+     AllEpicBranches();
+     let list = await GetEpics();
+     list.pop();
 
-    if (argv.epic) {
-      console.log("\x1b[36m%s\x1b[0m", "ALL EPIC BRANCHES:\n");
-
-      let list = await shell
-        .exec(`git branch -a | grep epic/CTDEV-`) //Already logs
-        .split("\n")
-        .map((branch) => branch.trim());
-      list.pop();
-    
-      console.log("\x1b[36m%s\x1b[0m", "\nLocal epics available: ", list, "\n");
+    if (epic) {
+      AllLocalBranches(list);
       if (list.length !== 0) {
         let spawn = require("child_process").spawn;
         let packagePath = await shell.exec(`npm config get prefix`);
@@ -21,84 +41,31 @@ async function start(argv) {
 
         await spawn(
           "sh",
-          [
-            shFilePath,
-            list.toString().replace(/,/g, " "),
-            argv.jiraId,
-            argv.name,
-          ],
+          [shFilePath, list.toString().replace(/,/g, " "), jiraId, name],
           {
             stdio: "inherit",
           }
         );
       } else {
-        console.log("\x1b[31m", "ERROR: There are no epics");
+        NoEpics();
       }
     } else {
-      if (argv.name.toString().startsWith("pepito/epic-", 0)) {
+      if (IsFromEpic(name)) {
         let epicName = argv.name.split("/")[1].replace("-", "/CTDEV-");
-        let pepitoName = argv.name.split("/")[2];
 
         if (list.includes(epicName)) {
-          console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
-          shell.exec(`git checkout ${epicName}`);
-          shell.exec(`git fetch`);
-          shell.exec(`git pull --rebase origin ${epicName}`);
-          shell.exec(
-            `git checkout -b pepito/${epicName}/CTDEV-${argv.jiraId}_${pepitoName}`
-          );
-          shell.exec(
-            `git push origin ${epicName} pepito/${epicName}/CTDEV-${argv.jiraId}_${pepitoName}`
-          );
-
-          console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-          console.log("\x1b[33m", `\ngit checkout ${epicName}`);
-          console.log("\x1b[33m", `git fetch`);
-          console.log("\x1b[33m", `git pull --rebase origin ${epicName}`);
-          console.log(
-            "\x1b[33m",
-            `git checkout -b pepito/${epicName}/CTDEV-${argv.jiraId}_${pepitoName}`
-          );
-          console.log(
-            "\x1b[33m",
-            `git push origin ${epicName} pepito/${epicName}/CTDEV-${argv.jiraId}_${pepitoName}`
-          );
+          MoveToBranch(epicName);
+          CreatePepitoFromEpic({ epicName, jiraId, pepitoName });
+          CreateEpicAndPepitoDisplayer({ epicName, jiraId, pepitoName });
         } else {
-          console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
-          shell.exec(`git checkout develop`);
-          shell.exec(`git fetch`);
-          shell.exec(`git pull --rebase origin develop`);
-          shell.exec(`git checkout -b ${epicName}`);
-          shell.exec(`git push origin ${epicName}`);
-          shell.exec(
-            `git checkout -b pepito/${epicName}/CTDEV-${argv.jiraId}_${pepitoName}`
-          );
-          shell.exec(
-            `git push origin pepito/${epicName}/CTDEV-${argv.jiraId}_${pepitoName}`
-          );
+          MoveToDevelop();
+          CreatpePepitosBranch(epicName);
+          CreatePepitoFromEpic({ epicName, jiraId, pepitoName });
+          CreateEpicAndPepitoDisplayer({ epicName, jiraId, pepitoName });
         }
       } else {
-        console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
-        shell.exec(`git checkout develop`);
-        shell.exec(`git fetch`);
-        shell.exec(`git pull --rebase origin develop`);
-        shell.exec(`git checkout -b pepito/CTDEV-${argv.jiraId}_${argv.name}`);
-        shell.exec(
-          `git push origin develop pepito/CTDEV-${argv.jiraId}_${argv.name}`
-        );
-
-        console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
-        console.log("\x1b[33m", `\ngit checkout develop`);
-        console.log("\x1b[33m", `git fetch`);
-        console.log("\x1b[33m", `git pull --rebase origin develop`);
-        console.log(
-          "\x1b[33m",
-          `git checkout -b pepito/CTDEV-${argv.jiraId}_${argv.name}`
-        );
-        console.log(
-          "\x1b[33m",
-          `git push origin develop pepito/CTDEV-${argv.jiraId}_${argv.name}`
-        );
+        CreatePepito({ jiraId, name });
+        CreatePepitoDisplayer({ jiraId, name });
       }
     }
   } else {
@@ -107,58 +74,38 @@ async function start(argv) {
 }
 
 async function finish(argv) {
-  let validInput = true;
+  const { name } = argv;
+  let hasName = true;
   let epicName;
-  let branchName = shell.exec(`git branch --show-current`);
+  let branchName = GetBranchName().toString();
 
   if (!argv.name) {
-    console.log(
-      "\x1b[33m",
-      "WARNING: Missing name argument, will finish current branch if it is a pepito"
-    );
-    validInput = false;
+    DeleteSelfBranchWarning();
+    hasName = false;
   }
 
-  if (validInput) {
-    shell.exec(`git checkout ${argv.name}`);
-    branchName = argv.name;
+  if (hasName) {
+    MoveToBranch(name);
+    branchName = name;
   } else {
-    console.log(
-      "\x1b[36m%s\x1b[0m",
-      `Finishing current branch:${branchName}\n`
-    );
+    DeletingCurrentBranchDisplayer(branchName);
   }
 
-  if (branchName.toString().startsWith("pepito/epic", 0)) {
+  if (IsFromEpic(branchName)) {
     let branchNameArray = branchName.toString().split("/");
     epicName = branchNameArray[1].replace("-", "/");
-    shell.exec(`git checkout ${epicName}`);
-    shell.exec(`git merge --no-ff ${branchName}`);
-    shell.exec(`git branch -d ${branchName}`);
-
-    console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:\n");
-    console.log("\x1b[33m", `git branch --show-current`);
-    console.log("\x1b[33m", `git checkout ${epicName}`);
-    console.log("\x1b[33m", `git merge --no-ff ${branchName}`);
-    console.log("\x1b[33m", `git branch -d ${branchName}`);
+    MoveToBranch(epicName);
+    FinishPepito(branchName);
+    ClosePepitoOnEpicDisplayer({ epicName, branchName });
   } else {
-    shell.exec(`git checkout develop`);
-    shell.exec(`git merge --no-ff ${branchName}`);
-    shell.exec(`git branch -d ${branchName}`);
-    console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:\n");
-    console.log("\x1b[33m", `git branch --show-current`);
-    console.log("\x1b[33m", `git checkout develop`);
-    console.log("\x1b[33m", `git merge --no-ff ${branchName}`);
-    console.log("\x1b[33m", `git branch -d ${branchName}`);
+    MoveToDevelop();
+    FinishPepito(branchName);
+    ClosePepiToOnDevelopDisplayer(branchName);
   }
 }
 
-async function handleError(argv) {
-  console.log("\x1b[31m", "\nERROR: NO SUBCOMMAND SPECIFIED");
-  console.log("\x1b[37m", "\nusage: ctflow pepito start");
-  console.log("or: ctflow pepito finish");
-  console.log("\nManage your pepito branches.");
-  console.log("For more specific help type the command followed by --help");
+async function handleError() {
+  HandleErrorDysplayer();
 }
 
 module.exports = {
