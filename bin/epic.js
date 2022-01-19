@@ -13,7 +13,7 @@ const {
 } = require("./helpers/gitFunctions");
 const {
   CurrentBranchMessage,
-  EpicFinishWrongBrnahError,
+  EpicFinishWrongBranchError,
 } = require("./helpers/comonDisplayer");
 
 async function start(argv) {
@@ -35,7 +35,7 @@ async function finish(argv) {
       MergeToDevelopCloseBranchFromBranch(branchName);
       FinishFromEpicDisplay(branchName);
     } else {
-      EpicFinishWrongBrnahError();
+      EpicFinishWrongBranchError();
     }
   }
 }

@@ -23,7 +23,7 @@ function CreatpePepitosBranch(epicName) {
 
 function CreatePepito(params) {
   const { jiraId, name } = params;
-  shell.exec(`git checkout aux2`);
+  shell.exec(`git checkout develop`);
   shell.exec(`git fetch`);
   shell.exec(`git pull --rebase origin develop`);
   shell.exec(`git checkout -b pepito/CTDEV-${jiraId}_${name}`);

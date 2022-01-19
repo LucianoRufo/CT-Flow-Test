@@ -15,12 +15,12 @@ function CurrentBranchMessage(currentBranch) {
   console.log(currentBranch)
 }
 
-function EpicFinishWrongBrnahError() {
+function EpicFinishWrongBranchError() {
   console.log("\x1b[31m", "\nERROR: YOU ARE NOT ON AN EPIC BRANCH");
 }
 
 module.exports = {
   BaseMessage: BaseMessage,
   CurrentBranchMessage: CurrentBranchMessage,
-  EpicFinishWrongBrnahError: EpicFinishWrongBrnahError,
+  EpicFinishWrongBranchError: EpicFinishWrongBranchError,
 };
