@@ -84,6 +84,14 @@ yargs
           describe:
             "Merges the indicated hotfix branch to master and deletes it.",
           handler: hotfixFinish,
+          builder: (yargs) => {
+            yargs.option("--noDev", {
+              alias: "noDev",
+              describe: "Indicates that the hotfix is no relevant on develop so it does not move it to there.",
+              default: false,
+              type: "boolean",
+            });
+          },
         });
     },
     handler: hotfixHandleError,
@@ -111,7 +119,7 @@ yargs
     command: "doc",
     describe: "Opens the ctflow doc",
     handler: () => {
-      shell.exec(`start ./images/CT_FLOW.jpg`);
+      shell.exec(`start ./images/CT_FLOW.jpg`);//#todo check unix suport
     },
   })
   .epilogue("Try 'ctflow <subcommand> --help' for details.")

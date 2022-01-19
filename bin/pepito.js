@@ -40,7 +40,7 @@ async function start(argv) {
           let shFilePath = `${packagePath}/node_modules/ct-flow/bin/pepito_start.sh`;
 
           await spawn(
-            "sh",
+            "sh",//#TODO Check windows suport
             [shFilePath, list.toString().replace(/,/g, " "), jiraId, name],
             {
               stdio: "inherit",
