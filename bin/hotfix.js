@@ -9,6 +9,9 @@ async function start(argv) {
     shell.exec(
       `git checkout -b hotfix/CTDEV-${argv.jiraId}_${argv.name} master`
     );
+    shell.exec(
+      `git push origin hotfix/CTDEV-${argv.jiraId}_${argv.name}`
+    );
 
     console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
     console.log("\x1b[33m", `\ngit checkout master`);
@@ -17,6 +20,7 @@ async function start(argv) {
       "\x1b[33m",
       `\ngit checkout -b hotfix/CTDEV-${argv.jiraId}_${argv.name} master`
     );
+    console.log("\x1b[33m", `\ngit push origin hotfix/CTDEV-${argv.jiraId}_${argv.name}`)
   }
 }
 
@@ -31,6 +35,8 @@ async function finish(argv) {
       MoveToBranch(`hotfix/CTDEV-${argv.jiraId}_${argv.name}`)
       let data = await shell.exec(`git log --walk-reflogs hotfix/CTDEV-${argv.jiraId}_${argv.name}`)
       console.log('---------------------',data.stdout)
+      console.log('---------------------')
+      console.log('---------------------',data.String)
       console.log('---------------------')
     }
 
