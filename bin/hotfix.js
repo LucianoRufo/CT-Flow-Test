@@ -28,9 +28,9 @@ async function start(argv) {
 }
 
 async function finish(argv) {
-  const { name, jiraId, noDev } = argv;
+  const { name, jiraId } = argv;
   if (name && jiraId) {
-    FinishHotFixByIdAndName()
+    FinishHotFixByIdAndName(argv)
       console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
       console.log("\x1b[33m", `\ngit checkout master`);
       console.log(
