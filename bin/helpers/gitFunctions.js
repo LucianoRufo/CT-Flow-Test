@@ -23,9 +23,27 @@ async function GetEpics() {
   return epicsList;
 }
 
+function AddLastToArrPrototype() {
+  if (!Array.prototype.last.length) {
+    Array.prototype.last = function () {
+      return this[this.length - 1];
+    };
+  }
+}
+
+async function GetLogsFromHotFixStart(params, last=false) {
+  const data = await shell.exec(
+    `git log --walk-reflogs --oneline hotfix/CTDEV-${params.jiraId}_${params.name}`
+  ).stdout;
+  let position = !last ? data.toString().split("\n").length - 2 : 0;
+  let storyPoint = data.toString().split("\n")[position].split(" ")[0];
+  return { storyPoint };
+}
 module.exports = {
   MergeToDevelopCloseBranch: MergeToDevelopCloseBranch,
   GetBranchName: GetBranchName,
   MergeToDevelopCloseBranchFromBranch: MergeToDevelopCloseBranchFromBranch,
   GetEpics: GetEpics,
+  AddLastToArrPrototype: AddLastToArrPrototype,
+  GetLogsFromHotFixStart: GetLogsFromHotFixStart,
 };
