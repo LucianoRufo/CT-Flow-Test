@@ -1,15 +1,16 @@
 const shell = require("shelljs");
 const { MoveToBranch } = require("./movers");
-const {GetLogsFromHotFixStart} = require("./gitFunctions")
+const { GetLogsFromHotFixStart } = require("./gitFunctions");
 
-async function FinishHotFixByIdAndName({ jiraId, name, noDev }) {
+async function FinishHotFixByIdAndName(argv) {
+  const { name, jiraId, noDev } = argv;
   console.log("\x1b[36m%s\x1b[0m", "OUTPUT:\n");
   shell.exec(`git checkout master`);
   shell.exec(`git merge --no-ff hotfix/CTDEV-${jiraId}_${name}`);
 
   if (!noDev) {
     MoveToBranch(`hotfix/CTDEV-${jiraId}_${name}`);
-    let { storyPoint } = await GetLogsFromHotFixStart({argv});
+    let { storyPoint } = await GetLogsFromHotFixStart(argv);
     console.log(storyPoint);
     shell.exec(`git rebase -i ${storyPoint}`);
     storyPoint = await GetLogsFromHotFixStart(argv, true);
