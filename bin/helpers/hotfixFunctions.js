@@ -9,7 +9,7 @@ async function FinishHotFixByIdAndName({ jiraId, name, noDev }) {
 
   if (!noDev) {
     MoveToBranch(`hotfix/CTDEV-${jiraId}_${name}`);
-    let { storyPoint } = await GetLogsFromHotFixStart(argv);
+    let { storyPoint } = await GetLogsFromHotFixStart({argv});
     console.log(storyPoint);
     shell.exec(`git rebase -i ${storyPoint}`);
     storyPoint = await GetLogsFromHotFixStart(argv, true);
