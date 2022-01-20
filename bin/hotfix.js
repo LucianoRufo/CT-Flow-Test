@@ -1,5 +1,6 @@
 const shell = require("shelljs");
 const { MoveToBranch } = require("./helpers/movers");
+const {GetLogsFromHotFixStart} = require("./helpers/gitFunctions")
 
 
 async function start(argv) {
@@ -37,19 +38,21 @@ async function finish(argv) {
       
     } else {
       MoveToBranch(`hotfix/CTDEV-${argv.jiraId}_${argv.name}`);
-      let data = await shell.exec(
-        `git log --walk-reflogs --oneline hotfix/CTDEV-${argv.jiraId}_${argv.name}`
-      );
-      console.log("---------------------", data.stdout.toString().split("\n")[0].split(' ')[0]);
-      console.log("---------------------");
-      // console.log("---------------------", data);
-      // console.log("---------------------");
+      let {storyPoint} = await GetLogsFromHotFixStart(argv); 
+      console.log(storyPoint)
+      shell.exec(`git rebase -i ${storyPoint}`)
+      storyPoint = await GetLogsFromHotFixStart(argv, true)
+      shell.exec('git checkout pepito/epic/CTDEV-69/CTDEV-69_hotFixesAndReleases')
+      shell.exec(`git cherry-pick ${storyPoint.storyPoint}`)
+      
+      // getlast
+      
+      console.log('=====================',storyPoint);
     }
-//default to develop cherry pick, --noDev
+
 //move to develop and cherry picck from first commit and
 // then nuke the branch 
 
-    //   //
 
     //   console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:");
     //   console.log("\x1b[33m", `\ngit checkout master`);
