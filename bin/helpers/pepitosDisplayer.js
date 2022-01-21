@@ -46,7 +46,7 @@ function ClosePepitoOnEpicDisplayer(params) {
   console.log("\x1b[33m", `git branch -d ${branchName}`);
 }
 
-function ClosePepitoOnEpicDisplayer(pepito) {
+function ClosePepitoOnDevelopDisplayer(pepito) {
   console.log("\x1b[36m%s\x1b[0m", "\nCOMMANDS RUN:\n");
   console.log("\x1b[33m", `git branch --show-current`);
   console.log("\x1b[33m", `git checkout develop`);
@@ -68,5 +68,6 @@ module.exports = {
   DeleteSelfBranchWarning: DeleteSelfBranchWarning,
   DeletingCurrentBranchDisplayer: DeletingCurrentBranchDisplayer,
   ClosePepitoOnEpicDisplayer: ClosePepitoOnEpicDisplayer,
+  ClosePepitoOnDevelopDisplayer: ClosePepitoOnDevelopDisplayer,
   HandleErrorDysplayer: HandleErrorDysplayer,
 };

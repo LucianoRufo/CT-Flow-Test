@@ -19,6 +19,7 @@ const {
   DeleteSelfBranchWarning,
   DeletingCurrentBranchDisplayer,
   ClosePepitoOnEpicDisplayer,
+  ClosePepitoOnDevelopDisplayer,
   HandleErrorDysplayer,
 } = require("./helpers/pepitosDisplayer");
 
@@ -39,8 +40,9 @@ async function start(argv) {
           packagePath = packagePath.trim().replace(/\\/g, "/");
           let shFilePath = `${packagePath}/node_modules/ct-flow/bin/pepito_start.sh`;
 
+          //#TODO TEST IN ZSH
           await spawn(
-            "sh",//#TODO Check windows suport
+            "sh", //#TODO Check windows suport
             [shFilePath, list.toString().replace(/,/g, " "), jiraId, name],
             {
               stdio: "inherit",
@@ -101,7 +103,7 @@ async function finish(argv) {
   } else {
     MoveToDevelop();
     FinishPepito(branchName);
-    ClosePepiToOnDevelopDisplayer(branchName);
+    ClosePepitoOnDevelopDisplayer(branchName);
   }
 }
 
