@@ -1,3 +1,4 @@
+var inquirer = require("inquirer");
 const shell = require("shelljs");
 const {
   AllEpicBranches,
@@ -23,30 +24,32 @@ const {
   HandleErrorDysplayer,
 } = require("./helpers/pepitosDisplayer");
 
+async function chooseParentBranch(list) {
+  const answer = await inquirer.prompt(
+    {
+      name: 'epicBranch',
+      type: 'list',
+      message: 'Choose a parent branch \n orphans should start from develop',
+      choices: [...list, 'develop']
+    }
+  )
+
+  return answer.epicBranch
+}
+
 async function start(argv) {
   const { name, jiraId, epic } = argv;
   if (argv.name && argv.jiraId) {
-    let pepitoName = argv.name.split("/")[2];
+    let pepitoName = argv.name;
     if (name && jiraId) {
       AllEpicBranches();
       let list = await GetEpics();
-      list.pop();
-
       if (epic) {
-        AllLocalBranches(list);
         if (list.length !== 0) {
-          let spawn = require("child_process").spawn;
-          let packagePath = await shell.exec(`npm config get prefix`);
-          packagePath = packagePath.trim().replace(/\\/g, "/");
-          let shFilePath = `${packagePath}/node_modules/ct-flow/bin/pepito_start.sh`;
-
-          //#TODO TEST IN ZSH
-          await spawn(
-            "sh", //#TODO Check windows suport
-            [shFilePath, list.toString().replace(/,/g, " "), jiraId, name],
-            {
-              stdio: "inherit",
-            }
+          const baseBranch = await chooseParentBranch(list)
+          MoveToBranch(baseBranch);
+          shell.exec(
+            `git checkout -b pepito/${baseBranch}/CTDEV-${jiraId}_${pepitoName}`
           );
         } else {
           NoEpics();
@@ -54,7 +57,6 @@ async function start(argv) {
       } else {
         if (IsFromEpic(name)) {
           let epicName = argv.name.split("/")[1].replace("-", "/CTDEV-");
-
           if (list.includes(epicName)) {
             MoveToBranch(epicName);
             CreatePepitoFromEpic({ epicName, jiraId, pepitoName });

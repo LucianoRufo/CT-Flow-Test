@@ -15,12 +15,15 @@ function GetBranchName() {
 }
 
 async function GetEpics() {
-  let epicsList = await shell
-    // .exec(`git branch -a | grep epic/CTDEV-`) Already logs
-    .exec(`git branch -a | FINDSTR epic/CTDEV-`) //porque windows vite
+  const prefix = "refs/heads/";
+  let epiclist = await shell
+    .exec(`git for-each-ref --format='%(refname)' refs/heads/epic`)
     .split("\n")
-    .map((branch) => branch.trim());
-  return epicsList;
+    .map((branch) => branch.substring(
+      branch.indexOf(prefix) + prefix.length
+    ).trim());
+  epiclist.pop();
+  return epiclist;
 }
 
 function AddLastToArrPrototype() {
@@ -31,7 +34,7 @@ function AddLastToArrPrototype() {
   }
 }
 
-async function GetLogsFromHotFixStart(params, last=false) {
+async function GetLogsFromHotFixStart(params, last = false) {
   const data = await shell.exec(
     `git log --walk-reflogs --oneline hotfix/CTDEV-${params.jiraId}_${params.name}`
   ).stdout;
